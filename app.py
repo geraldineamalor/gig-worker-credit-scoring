@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 
 # Load model
-model = joblib.load("credit_model.pkl")
+model = joblib.load("models/credit_model.pkl")
 
 st.title("Alternative Credit Scoring for Gig Workers")
 
