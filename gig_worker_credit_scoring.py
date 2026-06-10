@@ -45,6 +45,7 @@ y = df["credit_risk_category"]
 
 from sklearn.model_selection import train_test_split
 
+# Train-Test Split
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -52,52 +53,136 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
+# Dictionary to store results
+results = {}
+
+# ----------------------------
+# Logistic Regression
+# ----------------------------
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
 lr = LogisticRegression(max_iter=1000)
-lr.fit(X_train,y_train)
+
+lr.fit(X_train, y_train)
+
 y_pred_lr = lr.predict(X_test)
 
-from sklearn.metrics import accuracy_score
-accuracy_lr = accuracy_score(y_test,y_pred_lr)
-print("Logistic Regression Accuracy:",accuracy_lr)
+accuracy_lr = accuracy_score(y_test, y_pred_lr)
 
-from sklearn.metrics import classification_report
-print(classification_report(y_test,y_pred_lr ))
+print("=" * 50)
+print("LOGISTIC REGRESSION")
+print("=" * 50)
 
-from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(y_test,y_pred_lr)
-print(cm)
+print("Accuracy:", accuracy_lr)
 
-results = {}
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred_lr))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred_lr))
+
 results["Logistic Regression"] = accuracy_lr
 
+# ----------------------------
+# Random Forest
+# ----------------------------
 from sklearn.ensemble import RandomForestClassifier
-rf = RandomForestClassifier(n_estimators=100,random_state=42)
-rf.fit(X_train,y_train)
-print("Model trained")
+
+rf = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+rf.fit(X_train, y_train)
+
 y_pred_rf = rf.predict(X_test)
 
-from sklearn.metrics import accuracy_score
-accuracy_rf = accuracy_score(y_test,y_pred_rf)
-print("Random Forest Accuracy:",accuracy_rf)
+accuracy_rf = accuracy_score(y_test, y_pred_rf)
 
-print(classification_report(y_test,y_pred_rf))
+print("\n" + "=" * 50)
+print("RANDOM FOREST")
+print("=" * 50)
+
+print("Accuracy:", accuracy_rf)
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred_rf))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred_rf))
 
 results["Random Forest"] = accuracy_rf
 
+# ----------------------------
+# XGBoost
+# ----------------------------
 from xgboost import XGBClassifier
-xgb = XGBClassifier(random_state=42,eval_metric="mlogloss")
-xgb.fit(X_train,y_train)
+
+xgb = XGBClassifier(
+    random_state=42,
+    eval_metric="mlogloss"
+)
+
+xgb.fit(X_train, y_train)
+
 y_pred_xgb = xgb.predict(X_test)
 
-from sklearn.metrics import accuracy_score
-accuracy_xgb = accuracy_score(y_test,y_pred_xgb)
-print("XGBoost Accuracy:",accuracy_xgb)
+accuracy_xgb = accuracy_score(y_test, y_pred_xgb)
 
-results = {
-    "Logistic Regression": accuracy_lr,
-    "Random Forest": accuracy_rf,
-    "XGBoost": accuracy_xgb
-}
+print("\n" + "=" * 50)
+print("XGBOOST")
+print("=" * 50)
 
-print(results)
+print("Accuracy:", accuracy_xgb)
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred_xgb))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred_xgb))
+
+results["XGBoost"] = accuracy_xgb
+
+# ----------------------------
+# Model Comparison
+# ----------------------------
+print("\n" + "=" * 50)
+print("MODEL COMPARISON")
+print("=" * 50)
+
+for model_name, score in results.items():
+    print(f"{model_name}: {score:.4f}")
+
+# ----------------------------
+# Select Best Model
+# ----------------------------
+best_model_name = max(results, key=results.get)
+
+if best_model_name == "Logistic Regression":
+    best_model = lr
+
+elif best_model_name == "Random Forest":
+    best_model = rf
+
+else:
+    best_model = xgb
+
+print("\nBest Model:", best_model_name)
+print("Best Accuracy:", results[best_model_name])
+
+# ----------------------------
+# Save Best Model
+# ----------------------------
+import os
+import joblib
+
+os.makedirs("models", exist_ok=True)
+
+joblib.dump(
+    best_model,
+    "models/credit_model.pkl"
+)
+
+print("\nBest model saved successfully!")
+print("Location: models/credit_model.pkl")
