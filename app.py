@@ -131,13 +131,6 @@ previous_microloan_repaid = st.selectbox(
     ["No", "Yes"]
 )
 
-financial_stability_score = st.slider(
-    "Financial Stability Score",
-    0.0,
-    100.0,
-    70.0
-)
-
 # Manual encoding
 gender_map = {"Female": 0, "Male": 1}
 city_map = {"Tier1": 0, "Tier2": 1, "Tier3": 2}
@@ -155,6 +148,19 @@ trend_map = {
     "Stable": 2
 }
 loan_map = {"No": 0, "Yes": 1}
+
+# Calculate Financial Stability Score Automatically
+
+financial_stability_score = (
+    (income_consistency_score * 0.4)
+    + (savings_ratio * 0.3)
+    + (utility_bill_payment_rate * 0.3)
+)
+
+st.metric(
+    "Financial Stability Score",
+    f"{financial_stability_score:.2f}"
+)
 
 if st.button("Predict Credit Risk"):
 
