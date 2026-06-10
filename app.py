@@ -157,11 +157,6 @@ financial_stability_score = (
     + (utility_bill_payment_rate * 0.3)
 )
 
-st.metric(
-    "Financial Stability Score",
-    f"{financial_stability_score:.2f}"
-)
-
 if st.button("Predict Credit Risk"):
 
     input_data = pd.DataFrame([{
@@ -196,6 +191,12 @@ if st.button("Predict Credit Risk"):
         1: "Low Risk",
         2: "Medium Risk"
     }
+
+    st.metric(
+    "Financial Stability Score",
+    f"{financial_stability_score:.2f}"
+    )
+
 
     st.success(
         f"Predicted Credit Risk: {risk_map[prediction]}"
